@@ -5,25 +5,21 @@ using UnityEngine.SceneManagement;
 public class QuizManager : MonoBehaviour
 {
     private readonly DataHandler _dataHandler = DataHandler.GetInstance();
+    private readonly QuizCreator _quizCreator = new QuizCreator();
 
-    private QuizUI _quizUI;
+    [SerializeField] private GameUI gameUI;
 
     private Queue<Question> _questionsQueue = new Queue<Question>();
     private Question _currentQuestion;
-    [HideInInspector] public List<string> answersOptions = new List<string>();
-
-    private void Awake()
-    {
-        _quizUI = FindObjectOfType<QuizUI>();
-    }
+    private List<string> _answersOptions = new List<string>();
 
     private void Start()
     {
-        _questionsQueue = _dataHandler.QuizCreator.GenerateQuiz(_dataHandler.AllValidQuestions, 1, false, QuestionCategory.General, QuestionDifficulty.Easy);
+        _questionsQueue = _quizCreator.GenerateQuiz(_dataHandler.AllValidQuestions, 1, false, QuestionCategory.General, QuestionDifficulty.Easy);
 
         NextQuestion();
 
-        _quizUI.SetListeners();
+        gameUI.SetListeners();
     }
 
     public void NextQuestion()
@@ -36,15 +32,15 @@ public class QuizManager : MonoBehaviour
 
         _currentQuestion = _questionsQueue.Dequeue();
 
-        answersOptions.Clear();
-        answersOptions.AddRange(_currentQuestion.WrongAnswers);
-        answersOptions.Add(_currentQuestion.CorrectAnswer);
+        _answersOptions.Clear();
+        _answersOptions.AddRange(_currentQuestion.WrongAnswers);
+        _answersOptions.Add(_currentQuestion.CorrectAnswer);
 
-        answersOptions = Utilities.RandomizeList(answersOptions);
+        _answersOptions = Utilities.RandomizeList(_answersOptions);
 
-        _quizUI.SetListeners();
+        gameUI.SetListeners();
 
-        _quizUI.UpdateInterface(_currentQuestion, answersOptions);
+        gameUI.UpdateInterface(_currentQuestion, _answersOptions);
     }
 
     public void CheckAnswer(string selectedAnswer)
@@ -69,5 +65,10 @@ public class QuizManager : MonoBehaviour
     private void BackToMainMenu()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public List<string> GetAnswersOptions()
+    {
+        return _answersOptions;
     }
 }

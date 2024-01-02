@@ -6,7 +6,11 @@ public class Question
 
     public float NumberOfTimesAnsweredCorrectly { get; private set; }
     public float NumberOfTimesAnswered { get; private set; }
-    public float PercentageOfCorrectAnswers { get; private set; }
+
+    public float PercentageOfCorrectAnswers
+    {
+        get => NumberOfTimesAnsweredCorrectly * 100 / NumberOfTimesAnswered;
+    }
 
     #endregion
 
@@ -53,11 +57,5 @@ public class Question
     public void ChangeDifficulty(QuestionDifficulty difficulty)
     {
         Difficulty = difficulty;
-    }
-
-    public float RightAnswers()
-    {
-        PercentageOfCorrectAnswers = NumberOfTimesAnsweredCorrectly * 100 / NumberOfTimesAnswered;
-        return PercentageOfCorrectAnswers;
     }
 }
